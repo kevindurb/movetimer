@@ -1,0 +1,27 @@
+{
+  "name": "movetimer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevindurb/movetimer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevindurb/movetimer/issues"
+  },
+  "homepage": "https://github.com/kevindurb/movetimer#readme",
+  "dependencies": {
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@tsconfig/esm": "^1.0.3",
+    "prettier": "^2.8.8"
+  }
+}

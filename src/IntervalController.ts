@@ -12,6 +12,7 @@ export class IntervalController {
 
   constructor(private model: IntervalsModel) {
     this.$addIntervalButton.addEventListener('click', this.handleAddInterval);
+    this.renderIntervals();
   }
 
   private renderIntervals() {
@@ -48,16 +49,20 @@ export class IntervalController {
     $removeButton.dataset.id = index.toString();
     $removeButton.addEventListener('click', this.handleItemRemove);
 
+    $name.addEventListener('blur', this.handleUpdateName);
+    $duration.addEventListener('blur', this.handleUpdateDuration);
+
     return $item;
   }
 
   private handleAddInterval = () => {
     this.model.push('New Interval', 30);
+    this.model.save();
     this.renderIntervals();
   };
 
   private findIntervalItem = (child: HTMLElement) => {
-    const parent = child.closest('.intervalItem');
+    const parent = child.closest('.interval-item');
 
     if (!parent) throw new Error('couldnt find interval item parent');
 
@@ -75,6 +80,7 @@ export class IntervalController {
   private handleItemRemove = (event: MouseEvent) => {
     const id = this.getIntervalItemId(event.currentTarget as HTMLElement);
     this.model.remove(id);
+    this.model.save();
     this.renderIntervals();
   };
 
@@ -83,6 +89,18 @@ export class IntervalController {
     const id = this.getIntervalItemId($input);
     const interval = this.model.get(id);
     interval.name = $input.value;
+
+    this.model.save();
+    this.renderIntervals();
+  };
+
+  private handleUpdateDuration = (event: KeyboardEvent) => {
+    const $input = event.currentTarget as HTMLInputElement;
+    const id = this.getIntervalItemId($input);
+    const interval = this.model.get(id);
+    interval.durationMinutes = parseInt($input.value);
+
+    this.model.save();
     this.renderIntervals();
   };
 }

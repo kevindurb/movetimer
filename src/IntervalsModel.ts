@@ -27,4 +27,13 @@ export class IntervalsModel {
       (interval, index) => index !== indexToRemove,
     );
   }
+
+  load() {
+    this._intervals =
+      JSON.parse(window.localStorage.getItem('intervals')) ?? [];
+  }
+
+  save() {
+    window.localStorage.setItem('intervals', JSON.stringify(this._intervals));
+  }
 }

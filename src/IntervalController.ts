@@ -1,4 +1,5 @@
-import type { IntervalsModel, Interval } from './IntervalsModel.js';
+import type { IntervalModel } from './IntervalModel.js';
+import type { IntervalCollection } from './IntervalCollection.js';
 import { getElementById } from './util.js';
 
 export class IntervalController {
@@ -10,13 +11,13 @@ export class IntervalController {
     'interval-item-template',
   );
 
-  constructor(private model: IntervalsModel) {
+  constructor(private collection: IntervalCollection) {
     this.$addIntervalButton.addEventListener('click', this.handleAddInterval);
     this.renderIntervals();
   }
 
   private renderIntervals() {
-    const intervals = this.model.intervals;
+    const intervals = this.collection.intervals;
     this.$intervalList.innerHTML = '';
 
     for (const [index, interval] of intervals.entries()) {
@@ -26,7 +27,7 @@ export class IntervalController {
     }
   }
 
-  private buildIntervalElement(interval: Interval, index: number) {
+  private buildIntervalElement(interval: IntervalModel, index: number) {
     const $item = (
       this.$intervalItemTemplate.content.cloneNode(true) as DocumentFragment
     ).querySelector('.interval-item') as HTMLDivElement;
@@ -42,11 +43,10 @@ export class IntervalController {
       '.interval-item-remove',
     ) as HTMLButtonElement;
 
-    $item.dataset.id = index.toString();
+    $item.dataset.id = interval.id;
     $id.innerHTML = `#${index}`;
     $name.value = interval.name;
     $duration.value = interval.durationMinutes.toString();
-    $removeButton.dataset.id = index.toString();
     $removeButton.addEventListener('click', this.handleItemRemove);
 
     $name.addEventListener('blur', this.handleUpdateName);
@@ -56,8 +56,7 @@ export class IntervalController {
   }
 
   private handleAddInterval = () => {
-    this.model.push('New Interval', 30);
-    this.model.save();
+    this.collection.add('New Interval', 30);
     this.renderIntervals();
   };
 
@@ -74,33 +73,32 @@ export class IntervalController {
     const id = $intervalItem.dataset.id;
     if (!id) throw new Error('id not found');
 
-    return parseInt(id);
+    return id;
   };
 
   private handleItemRemove = (event: MouseEvent) => {
     const id = this.getIntervalItemId(event.currentTarget as HTMLElement);
-    this.model.remove(id);
-    this.model.save();
+    this.collection.remove(id);
     this.renderIntervals();
   };
 
   private handleUpdateName = (event: KeyboardEvent) => {
     const $input = event.currentTarget as HTMLInputElement;
     const id = this.getIntervalItemId($input);
-    const interval = this.model.get(id);
+    const interval = this.collection.get(id);
     interval.name = $input.value;
 
-    this.model.save();
+    this.collection.save();
     this.renderIntervals();
   };
 
   private handleUpdateDuration = (event: KeyboardEvent) => {
     const $input = event.currentTarget as HTMLInputElement;
     const id = this.getIntervalItemId($input);
-    const interval = this.model.get(id);
+    const interval = this.collection.get(id);
     interval.durationMinutes = parseInt($input.value);
 
-    this.model.save();
+    this.collection.save();
     this.renderIntervals();
   };
 }

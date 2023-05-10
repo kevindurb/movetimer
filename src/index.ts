@@ -1,6 +1,8 @@
 import { IntervalController } from './IntervalController.js';
-import { IntervalsModel } from './IntervalsModel.js';
+import { TimerController } from './TimerController.js';
+import { IntervalCollection } from './IntervalCollection.js';
 
-const intervalsModel = new IntervalsModel();
-intervalsModel.load();
-const intervalController = new IntervalController(intervalsModel);
+const collection = new IntervalCollection();
+collection.load();
+const intervalController = new IntervalController(collection);
+const timerController = new TimerController(collection);

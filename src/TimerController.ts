@@ -13,76 +13,96 @@ export class TimerController {
   private state: 'stopped' | 'running' | 'paused' = 'stopped';
 
   constructor(private collection: IntervalCollection) {
-    setInterval(() => this.renderTimer(), 1000);
+    setInterval(() => this.renderTimer(), 100);
 
     this.$startStopButton.addEventListener('click', this.handleStartStopClick);
     this.$pauseButton.addEventListener('click', this.handlePauseClick);
-
-    console.log(this.$startStopButton);
   }
 
   private renderTimer() {
-    if (!this.currentIntervalId) return;
-
-    const currentInterval = this.collection.get(this.currentIntervalId);
-
-    this.$timeRemaining.textContent = this.getSecondsRemaining().toFixed(0);
-    this.$currentIntervalName.textContent = currentInterval.name;
+    if (this.currentIntervalId) {
+      const currentInterval = this.collection.get(this.currentIntervalId);
+      this.$timeRemaining.textContent = this.getSecondsRemaining().toFixed(0);
+      this.$currentIntervalName.textContent = currentInterval.name;
+    } else {
+      this.$timeRemaining.textContent = '';
+      this.$currentIntervalName.textContent = '';
+    }
   }
 
   private getSecondsRemaining() {
     if (this.state === 'stopped') return 0;
-
     if (this.state === 'paused') return this.secondsRemaining;
-
     return this.endTime - Date.now() / 1000;
+  }
+
+  private updateButtons() {
+    switch (this.state) {
+      case 'running':
+        this.$pauseButton.removeAttribute('disabled');
+        this.$startStopButton.textContent = 'stop';
+        this.$startStopButton.classList.remove('btn-success');
+        this.$startStopButton.classList.add('btn-danger');
+        break;
+      case 'stopped':
+        this.$pauseButton.setAttribute('disabled', 'disabled');
+        this.$startStopButton.textContent = 'start';
+        this.$startStopButton.classList.remove('btn-danger');
+        this.$startStopButton.classList.add('btn-success');
+        break;
+      case 'paused':
+        this.$pauseButton.setAttribute('disabled', 'disabled');
+        this.$startStopButton.textContent = 'resume';
+        this.$startStopButton.classList.remove('btn-danger');
+        this.$startStopButton.classList.add('btn-success');
+        break;
+    }
   }
 
   private startNewTimer() {
     const [firstInterval] = this.collection.intervals;
     if (!firstInterval) return;
 
-    console.log('starting');
-
     this.currentIntervalId = firstInterval.id;
     this.endTime = Date.now() / 1000 + firstInterval.durationMinutes * 60;
     this.secondsRemaining = undefined;
     this.state = 'running';
-    this.$pauseButton.removeAttribute('disabled');
+    this.updateButtons();
   }
 
   private resumeTimer() {
-    console.log('resuming');
     this.endTime = Date.now() / 1000 + this.secondsRemaining;
     this.secondsRemaining = undefined;
     this.state = 'running';
-    this.$pauseButton.removeAttribute('disabled');
+    this.updateButtons();
   }
 
   private stopTimer() {
-    console.log('stopping');
     this.currentIntervalId = undefined;
     this.endTime = undefined;
     this.secondsRemaining = undefined;
     this.state = 'stopped';
-    this.$pauseButton.setAttribute('disabled', 'disabled');
+    this.updateButtons();
   }
 
   private pauseTimer() {
-    console.log('pausing');
     this.secondsRemaining = this.endTime - Date.now() / 1000;
     this.endTime = undefined;
     this.state = 'paused';
-    this.$pauseButton.setAttribute('disabled', 'disabled');
+    this.updateButtons();
   }
 
   private handleStartStopClick = () => {
-    if (this.state === 'stopped') {
-      this.startNewTimer();
-    } else if (this.state === 'paused') {
-      this.resumeTimer();
-    } else if (this.state === 'running') {
-      this.stopTimer();
+    switch (this.state) {
+      case 'stopped':
+        this.startNewTimer();
+        break;
+      case 'paused':
+        this.resumeTimer();
+        break;
+      case 'running':
+        this.stopTimer();
+        break;
     }
   };
 

@@ -1,5 +1,6 @@
 import { IntervalCollection } from './IntervalCollection.js';
 import { getElementById } from './util.js';
+import { TimerModel } from './TimerModel.js';
 
 export class TimerController {
   private $timeRemaining = getElementById('time-remaining');
@@ -7,12 +8,10 @@ export class TimerController {
   private $startStopButton = getElementById('start-stop-button');
   private $pauseButton = getElementById('pause-button');
 
-  private endTime: number | undefined;
-  private secondsRemaining: number | undefined;
-  private currentIntervalId: string | undefined;
-  private state: 'stopped' | 'running' | 'paused' = 'stopped';
-
-  constructor(private collection: IntervalCollection) {
+  constructor(
+    private collection: IntervalCollection,
+    private timerModel: TimerModel,
+  ) {
     setInterval(() => this.renderTimer(), 100);
 
     this.$startStopButton.addEventListener('click', this.handleStartStopClick);
@@ -20,9 +19,11 @@ export class TimerController {
   }
 
   private renderTimer() {
-    if (this.currentIntervalId) {
-      const currentInterval = this.collection.get(this.currentIntervalId);
-      this.$timeRemaining.textContent = this.getSecondsRemaining().toFixed(0);
+    const currentIntervalId = this.timerModel.getCurrentIntervalId();
+    if (currentIntervalId) {
+      const currentInterval = this.collection.get(currentIntervalId);
+      this.$timeRemaining.textContent =
+        this.timerModel.getFormattedTimeRemaining();
       this.$currentIntervalName.textContent = currentInterval.name;
     } else {
       this.$timeRemaining.textContent = '';
@@ -30,14 +31,8 @@ export class TimerController {
     }
   }
 
-  private getSecondsRemaining() {
-    if (this.state === 'stopped') return 0;
-    if (this.state === 'paused') return this.secondsRemaining;
-    return this.endTime - Date.now() / 1000;
-  }
-
   private updateButtons() {
-    switch (this.state) {
+    switch (this.timerModel.getState()) {
       case 'running':
         this.$pauseButton.removeAttribute('disabled');
         this.$startStopButton.textContent = 'stop';
@@ -59,54 +54,28 @@ export class TimerController {
     }
   }
 
-  private startNewTimer() {
-    const [firstInterval] = this.collection.intervals;
-    if (!firstInterval) return;
-
-    this.currentIntervalId = firstInterval.id;
-    this.endTime = Date.now() / 1000 + firstInterval.durationMinutes * 60;
-    this.secondsRemaining = undefined;
-    this.state = 'running';
-    this.updateButtons();
-  }
-
-  private resumeTimer() {
-    this.endTime = Date.now() / 1000 + this.secondsRemaining;
-    this.secondsRemaining = undefined;
-    this.state = 'running';
-    this.updateButtons();
-  }
-
-  private stopTimer() {
-    this.currentIntervalId = undefined;
-    this.endTime = undefined;
-    this.secondsRemaining = undefined;
-    this.state = 'stopped';
-    this.updateButtons();
-  }
-
-  private pauseTimer() {
-    this.secondsRemaining = this.endTime - Date.now() / 1000;
-    this.endTime = undefined;
-    this.state = 'paused';
-    this.updateButtons();
-  }
-
   private handleStartStopClick = () => {
-    switch (this.state) {
+    switch (this.timerModel.getState()) {
       case 'stopped':
-        this.startNewTimer();
+        const [firstInterval] = this.collection.intervals;
+        if (firstInterval) {
+          this.timerModel.load(firstInterval);
+          this.timerModel.resume();
+        }
         break;
       case 'paused':
-        this.resumeTimer();
+        this.timerModel.resume();
         break;
       case 'running':
-        this.stopTimer();
+        this.timerModel.stop();
         break;
     }
+
+    this.updateButtons();
   };
 
   private handlePauseClick = () => {
-    this.pauseTimer();
+    this.timerModel.pause();
+    this.updateButtons();
   };
 }

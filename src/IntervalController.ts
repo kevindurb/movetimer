@@ -46,7 +46,7 @@ export class IntervalController {
     $item.dataset.id = interval.id;
     $id.innerHTML = `#${index}`;
     $name.value = interval.name;
-    $duration.value = interval.durationMinutes.toString();
+    $duration.value = (interval.duration / 60).toString();
     $removeButton.addEventListener('click', this.handleItemRemove);
 
     $name.addEventListener('blur', this.handleUpdateName);
@@ -96,7 +96,7 @@ export class IntervalController {
     const $input = event.currentTarget as HTMLInputElement;
     const id = this.getIntervalItemId($input);
     const interval = this.collection.get(id);
-    interval.durationMinutes = parseInt($input.value);
+    interval.duration = parseInt($input.value) * 60;
 
     this.collection.save();
     this.renderIntervals();

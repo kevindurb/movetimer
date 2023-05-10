@@ -2,7 +2,7 @@ export class IntervalModel {
   constructor(
     private _id: string,
     private _name: string,
-    private _durationMinutes: number,
+    private _duration: number,
   ) {}
 
   get id() {
@@ -21,28 +21,28 @@ export class IntervalModel {
     this._name = name;
   }
 
-  get durationMinutes() {
-    return this._durationMinutes;
+  get duration() {
+    return this._duration;
   }
 
-  set durationMinutes(durationMinutes: number) {
-    this._durationMinutes = durationMinutes;
+  set duration(duration: number) {
+    this._duration = duration;
   }
 
   toJSON() {
-    const { id, name, durationMinutes } = this;
+    const { id, name, duration } = this;
     return {
       id,
       name,
-      durationMinutes,
+      duration,
     };
   }
 
-  static fromJSON(data: { id: string; name: string; durationMinutes: number }) {
-    return new IntervalModel(data.id, data.name, data.durationMinutes);
+  static fromJSON(data: { id: string; name: string; duration: number }) {
+    return new IntervalModel(data.id, data.name, data.duration);
   }
 
-  static fromNameAndDuration(name: string, durationMinutes: number) {
-    return new IntervalModel(crypto.randomUUID(), name, durationMinutes);
+  static fromNameAndDuration(name: string, duration: number) {
+    return new IntervalModel(crypto.randomUUID(), name, duration);
   }
 }

@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/esm/tsconfig.json",
   "compilerOptions": {
+    "checkJs": true,
     "rootDir": "src",
     "outDir": "./dist",
     "target": "ES2022",

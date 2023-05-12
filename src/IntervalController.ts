@@ -88,7 +88,6 @@ export class IntervalController {
     const interval = this.collection.get(id);
     interval.name = $input.value;
 
-    this.collection.save();
     this.renderIntervals();
   };
 
@@ -98,7 +97,6 @@ export class IntervalController {
     const interval = this.collection.get(id);
     interval.duration = parseInt($input.value) * 60;
 
-    this.collection.save();
     this.renderIntervals();
   };
 }

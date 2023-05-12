@@ -29,17 +29,13 @@ export class IntervalModel {
     this._duration = duration;
   }
 
-  toJSON() {
+  valueOf() {
     const { id, name, duration } = this;
     return {
       id,
       name,
       duration,
     };
-  }
-
-  static fromJSON(data: { id: string; name: string; duration: number }) {
-    return new IntervalModel(data.id, data.name, data.duration);
   }
 
   static fromNameAndDuration(name: string, duration: number) {

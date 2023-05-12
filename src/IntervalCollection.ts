@@ -46,6 +46,6 @@ export class IntervalCollection {
   }
 
   valueOf() {
-    return this._intervals.map((interval) => interval.toJSON());
+    return this._intervals.map((interval) => interval.valueOf());
   }
 }

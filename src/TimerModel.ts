@@ -1,5 +1,12 @@
 import { IntervalModel } from './IntervalModel.js';
 
+interface TimerData {
+  endTime: number | undefined;
+  secondsRemaining: number | undefined;
+  currentIntervalId: string | undefined;
+  state: 'stopped' | 'running' | 'paused';
+}
+
 export class TimerModel {
   private endTime: number | undefined;
   private secondsRemaining: number | undefined;
@@ -8,6 +15,13 @@ export class TimerModel {
   private onEndTimeout: number | undefined;
   private onEndListeners: Array<() => void> = [];
 
+  constructor(data?: TimerData) {
+    this.state = data.state ?? 'stopped';
+    this.endTime = data.endTime;
+    this.secondsRemaining = data.secondsRemaining;
+    this.currentIntervalId = data.currentIntervalId;
+  }
+
   private getNowSeconds() {
     return Date.now() / 1000;
   }
@@ -15,6 +29,15 @@ export class TimerModel {
   private handleOnEnd() {
     this.stop();
     this.onEndListeners.forEach((cb) => cb());
+  }
+
+  valueOf() {
+    return {
+      state: this.state,
+      endTime: this.endTime,
+      secondsRemaining: this.secondsRemaining,
+      currentIntervalId: this.currentIntervalId,
+    };
   }
 
   addOnEndListener(cbToAdd: () => void) {

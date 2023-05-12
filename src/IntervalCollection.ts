@@ -26,10 +26,12 @@ export class IntervalCollection {
     return this.intervals.find((interval) => interval.id === id);
   }
 
-  getNext(id: string) {
+  getNext(id?: string) {
+    if (!id) return this.intervals[0];
+
     for (const [index, interval] of this.intervals.entries()) {
       if (interval.id === id) {
-        if (index + 1 >= this.intervals.length) return;
+        if (index + 1 >= this.intervals.length) return this.intervals[0];
         return this.intervals[index + 1];
       }
     }

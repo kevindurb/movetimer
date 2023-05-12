@@ -44,14 +44,6 @@ export class TimerController {
   }
 
   private loadNextInterval() {
-    if (!this.timerModel.getCurrentIntervalId()) {
-      const [firstInterval] = this.collection.intervals;
-      if (firstInterval) {
-        this.timerModel.load(firstInterval);
-        this.timerModel.resume();
-      }
-    }
-
     const next = this.collection.getNext(
       this.timerModel.getCurrentIntervalId(),
     );

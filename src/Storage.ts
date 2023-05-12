@@ -1,13 +1,17 @@
 export class Storage {
+  constructor(private key: string, private defaultValue: any) {}
+
   save(model: object) {
-    window.localStorage.setItem('intervals', JSON.stringify(model.valueOf()));
+    window.localStorage.setItem(this.key, JSON.stringify(model.valueOf()));
   }
 
   load() {
     try {
-      return JSON.parse(window.localStorage.getItem('intervals')) ?? [];
+      return (
+        JSON.parse(window.localStorage.getItem(this.key)) ?? this.defaultValue
+      );
     } catch (e) {
-      return [];
+      return this.defaultValue;
     }
   }
 }

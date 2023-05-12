@@ -1,10 +1,10 @@
 import { IntervalModel } from './IntervalModel.js';
 
 interface TimerData {
-  endTime: number | undefined;
-  secondsRemaining: number | undefined;
-  currentIntervalId: string | undefined;
-  state: 'stopped' | 'running' | 'paused';
+  endTime?: number | undefined;
+  secondsRemaining?: number | undefined;
+  currentIntervalId?: string | undefined;
+  state?: 'stopped' | 'running' | 'paused';
 }
 
 export class TimerModel {
@@ -15,7 +15,7 @@ export class TimerModel {
   private onEndTimeout: number | undefined;
   private onEndListeners: Array<() => void> = [];
 
-  constructor(data?: TimerData) {
+  constructor(data: TimerData) {
     this.state = data.state ?? 'stopped';
     this.endTime = data.endTime;
     this.secondsRemaining = data.secondsRemaining;

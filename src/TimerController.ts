@@ -29,10 +29,11 @@ export class TimerController {
     const currentIntervalId = this.timerModel.getCurrentIntervalId();
     if (currentIntervalId) {
       const currentInterval = this.collection.get(currentIntervalId);
-      console.log('notify');
-      new Notification(currentInterval.name, {
-        body: this.timerModel.getFormattedTimeRemaining(),
-      });
+      new Notification(
+        `${this.timerModel.getFormattedTimeRemaining()} - ${
+          currentInterval.name
+        }`,
+      );
     }
   }
 

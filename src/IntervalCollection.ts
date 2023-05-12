@@ -1,7 +1,22 @@
 import { IntervalModel } from './IntervalModel.js';
 
+interface IntervalData {
+  id: string;
+  name: string;
+  duration: number;
+}
+
+type IntervalCollectionData = Array<IntervalData>;
+
 export class IntervalCollection {
   private _intervals: Array<IntervalModel> = [];
+
+  constructor(intervalCollectionData?: IntervalCollectionData) {
+    this._intervals = intervalCollectionData.map(
+      (dataItem) =>
+        new IntervalModel(dataItem.id, dataItem.name, dataItem.duration),
+    );
+  }
 
   get intervals() {
     return this._intervals;
@@ -24,23 +39,13 @@ export class IntervalCollection {
     this._intervals.push(
       IntervalModel.fromNameAndDuration(name, durationMinutes),
     );
-    this.save();
   }
 
   remove(id: string) {
     this._intervals = this._intervals.filter((interval) => interval.id !== id);
-    this.save();
   }
 
-  load() {
-    const data = JSON.parse(window.localStorage.getItem('intervals')) ?? [];
-    this._intervals = data.map((dataItem) => IntervalModel.fromJSON(dataItem));
-  }
-
-  save() {
-    window.localStorage.setItem(
-      'intervals',
-      JSON.stringify(this._intervals.map((interval) => interval.toJSON())),
-    );
+  valueOf() {
+    return this._intervals.map((interval) => interval.toJSON());
   }
 }

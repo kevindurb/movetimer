@@ -11,6 +11,15 @@ export class IntervalCollection {
     return this.intervals.find((interval) => interval.id === id);
   }
 
+  getNext(id: string) {
+    for (const [index, interval] of this.intervals.entries()) {
+      if (interval.id === id) {
+        if (index + 1 >= this.intervals.length) return;
+        return this.intervals[index + 1];
+      }
+    }
+  }
+
   add(name: string, durationMinutes: number) {
     this._intervals.push(
       IntervalModel.fromNameAndDuration(name, durationMinutes),

@@ -56,7 +56,7 @@ export class IntervalController {
   }
 
   private handleAddInterval = () => {
-    this.collection.add('New Interval', 30);
+    this.collection.add('New Interval', 1800);
     this.renderIntervals();
   };
 
